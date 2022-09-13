@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static',filename='js/jquery-3.6.1.js') }}"></script>
+    <title>up视频</title>
+</head>
+<body>
+<form action=/v/upvideo method="post"><input type="text" class="form-control" id="exampleFormControlInput1" name="url" placeholder="UP主页链接"></input></form>
+<h1>{{ data['up_name'] }}</h1>
+<div>
+    {% for vlist in data['vlist'] %}
+        <a href="{{ vlist['url'] }}"><button>{{ vlist['name'] }}</button></a>
+    {% endfor %}
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程下载</title>
+</head>
+<body>
+{#{{ data }}#}
+<div class="classes">
+    {% if data %}
+{% for classes in data %}
+    <a href=/v/class?id={{ classes['id'] }}><button>{{ classes['title'] }}</button></a>
+{% endfor %}
+{% endif %}
+</div>
+<label class="after_class">
+    {{ class_info }}
+</label>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static',filename='js/jquery-3.6.1.js') }}"></script>
+    <title>下载项目选择</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}">
+</head>
+<body id="test">
+<strong id="tip"></strong>
+<ul>
+    <li><a id="obj1" href="javascript:class_page('/v/class')">课程</a></li>
+    <li><a id="obj2" href="javascript:drama_page('/v/cartoon')">追番</a></li>
+    <li><a id="obj3" href="javascript:drama_page('/v/drama')">追剧</a></li>
+    <li><a id="clean" href="javascript:clear()">清除</a></li>
+    <li><a id="bvideo_obj" href="javascript:make_vform()">投稿视频</a></li>
+    <li style="float:right"><a id="upvideo_obj" href="javascript:make_upform()">UP所有视频</a></li>
+</ul>
+
+
+
+
+
+
+{#    <button type="button" id="obj1" onclick="class_page('/v/class')">课程</button>#}
+{#    <button type="button" id="obj2" onclick="drama_page('/v/cartoon')">追番</button>#}
+{#    <button type="button" id="obj3" onclick="drama_page('/v/drama')">追剧</button>#}
+{#<button type="button" id="clear" onclick="clear()">清除</button>#}
+{#    <a href=/v/bvideo><button>投稿视频</button></a>#}
+{#    <a href=/v/upvideo><button>UP所有视频</button></a>#}
+{#    <button type="button" id="bvideo_obj" onclick="make_vform()">投稿视频</button>#}
+{#    <button type="button" id="upvideo_obj" onclick="make_upform()">UP所有视频</button>#}
+
+{#<form id="form-box">#}
+{#    <label for="form-box" class="form-row">搜索</label>#}
+{#    <input type="text" name="url">#}
+{#    <input type="radio" name="search_obj" value="bvideo">投稿视频#}
+{#    <input type="radio" name="search_obj" value="upvideo">UP所有视频#}
+{#    <input type="submit" name="" value="搜索">#}
+{#</form>#}
+
+
+<p>
+    {% if info %}
+        昵称：{{ info.name }}<br>
+        mid：{{ info.mid }}<br>
+        硬币数：{{ info.coins }}<br>
+        大会员：{{ info.vip }}<br>
+        大会员到期时间：{{ info.due_date }}<br>
+        注册时间：{{ info.join_time }}<br>
+    {% endif %}
+</p>
+<div class="text" id="tixing"></div>
+<script type="text/javascript">
+    function make_vform(){$("h1").remove();$("#objss").empty();$("h2").remove();$("button").remove();$("#tixing").remove();$("#search_block").remove();$("#url").remove(); const form = $('<form action="" id="search_block" onclick="return avoidJump()"><input type="text" class="form-search" id="url" name="url" placeholder="视频链接"><input type="submit" onclick="mySubmit()"></form>');$("body").append(form);}
+    function make_upform(){$("h1").remove();$("#objss").empty();$("h2").remove();$("button").remove();$("#tixing").remove();$("#search_block").remove();$("#url").remove(); const form = $('<form><input type="text" class="form-search" id="url" name="url" placeholder="UP主页链接"></input></form>');$("body").append(form)}
+    function download(id, url){
+        $.ajax({type: "POST",url: url, contentType: "application/json;charset=utf-8", data: JSON.stringify(JSON.parse(decodeURI(id))),dataType: "json",
+            beforeSend:function (){alert('点击确定开始下载！')},
+            success:function (data){console.log(data);alert('下载完成')}})}
+    function class_page(url){
+        $.ajax({type:"GET", url: url, data:{}, dataType:"json",
+            success:function (data){
+        const div = $('<div class="class_obj"></div>');
+        for (let i=0; i < data.length; i++){
+            const objs = data[i]['title'];
+
+            const upload = encodeURI(JSON.stringify(data[i]));
+            console.log(upload)
+            const a = `<button type="button" class="objs" onclick="download('${upload}', '${url}')">${objs}</button>`;
+            console.log(a)
+            div.append(a);
+        }
+        $("body").append(div)}})}
+    function drama_page(url){
+        $.ajax({type:"GET", url: url, data:{}, dataType:"json",
+            beforeSend:function (){alert('爬取需要一分钟左右，点击确定开始')},
+            success:function (data){
+        const div = $('<div class="class_obj"></div>');
+
+        for (let i=0; i < data.length; i++){
+            console.log(data[i])
+            const objs = data[i]['Name'];
+            console.log(objs)
+            const upload = encodeURI(JSON.stringify(data[i]));
+            {#console.log(upload)#}
+            const a = `<button type="button" class="objs" onclick="download('${upload}', '${url}')">${objs}</button>`;
+            {#console.log(a)#}
+            div.append(a);
+        }
+        $("body").append(div)}})}
+    function avoidJump(){return false}  //中断提交
+    function download2(url,num)
+    {console.log(url);$.ajax({type:"POST",url:'/download',contentType: "application/json;charset=utf-8",data:`{"url": "${url}", "num":"${num}"}`,dataType: "text",
+        beforeSend:function (){alert('点击确定开始下载！')},
+        success:function (data){console.log(data);alert('下载完成')}})}
+    function clear(){$("h1").remove();$("#objss").empty();$("h2").remove();$("#objs").remove();$("#tixing").remove();  console.log('清理完成')}
+
+    function mySubmit() {
+        let json = $("form").serialize();
+        let obj = {}
+        let url = json.split('=')
+        obj[url[0]] = decodeURIComponent(url[1])
+        url = obj['url']
+        const v_types = {
+            16: "360P 流畅",
+            32: "480P 清晰",
+            64: "720P 高清",
+            74: "720P60 高帧率",
+            80: "1080P 高清",
+            112: "1080P+ 高码率",
+            116: "1080P60 高帧率",
+            120: "4K 超清",
+            125: "HDR 真彩色",
+            126: "杜比视界",
+            127: "8K 超高清"
+        };
+        $.ajax({type:"POST",url:'/v/bvideo',data:obj,dataType:"json",
+        success:function (data){
+            $("#search_block").remove()
+            if (data['type']=='single'){
+                const title = $("<h1></h1>")
+                title.append(data['ep_name'])
+
+                $("body").append(title)
+                for (let i=0;i<data['dash']['video'].length;i++){
+                    const num = data['dash']['video'][i]['id'];
+                    const num_name = v_types[num]
+                    const button = $(`<button type="button" class="objs" onclick=download2('${url}',${num})>${num_name}</button>`);
+                    $("body").append(button)
+                }
+            }
+            else if (data['type']=='list'){
+                const title = $("<h1></h1>");
+                title.append(data['Season_name']);
+                $("body").append(title);
+                $("#tixing").append(`点击任意按钮就会直接下载下面的所有指定清晰度的视频，所选清晰度应用于列表里所有的视频，选[一个]即可`)
+                {#for (let i=0;i<data['dash']['video'].length;i++)#}
+                for (let i=0;i < data['Eps'].length;i++){
+                    const ep_name = $("<h2></h2>");
+                    ep_name.append(data['Eps'][i]['ep_name']);
+                    $("body").append(ep_name);
+                    for (let j=0;j<data['Eps'][i]['dash']['video'].length;j++){
+                        const num = data['Eps'][i]['dash']['video'][j]['id'];
+                        const num_name = v_types[num]
+                        console.log(num_name)
+                        const button = $(`<button type="button" class="objs" onclick=download2('${url}',${num})>${num_name}</button>`);
+                        $("body").append(button);
+                    }
+                }
+            }
+        }})
+        console.log(obj);
+    }
+
+
+
+</script>
+
+</body>
+</html>

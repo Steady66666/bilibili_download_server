@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="{{ url_for('static',filename='js/jquery-3.6.1.js') }}"></script>
+    <title>投稿视频</title>
+</head>
+<body>
+<form action=/v/bvideo method="post">
+    <input type="text" class="form-control" id="exampleFormControlInput1" name="url" placeholder="视频链接"></input>
+</form>
+<button onclick="make_html()">获取信息</button>
+<div></div>
+<script>
+    json_data = JSON.parse('{{ data | tojson | safe }}')
+    v_types = {16:"360P 流畅",32:"480P 清晰",64:"720P 高清",74:"720P60 高帧率",80:"1080P 高清",112:"1080P+ 高码率",116:"1080P60 高帧率",120:"4K 超清",125:"HDR 真彩色",126:"杜比视界",127:"8K 超高清"}
+    function download(data, num) {
+        $.ajax({type:"POST",url:`/download?num=${num}`,data:JSON.stringify(json_data)})
+    }
+    function make_html(){
+        const type = json_data['type'];
+        if (type=='single'){
+            const titel = $("<h1></h1>")
+            titel.append(json_data['ep_name'])
+            $("body").append(titel)
+            {#for ids in json_data['dash']#}
+            for (let i=0;i<json_data['dash']['video'].length;i++){
+                const num = json_data['dash']['video'][i]['id'];
+                const num_name = v_types[num]
+                const button = $(`<button type="button" id="objs" onclick=download(json_data,${num})>${num_name}</button>`);
+                $("div").append(button)
+
+            }
+        }
+        console.log(json_data)
+    }
+</script>
+</body>
+</html>
+
+
+{#<div>#}
+{#<p>同样的清晰度，越靠前的带宽越高，即品质越高</p>#}
+{#{% if data %}#}
+{#    {% if data['type'] == 'single' %}#}
+{#    <h1>{{ data['ep_name'] }}</h1>#}
+{#    <p>{% for dash in data['dash']['video'] %}#}
+{#        {% if dash['id']==112 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=112><button>1080P+ 高码率</button></a>#}
+{##}
+{#            {% elif dash['id']==64 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=64><button>720P 高清</button></a>#}
+{##}
+{#            {% elif dash['id']==74 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=74><button>720P60 高帧率</button></a>#}
+{##}
+{#            {% elif dash['id']==80 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=80><button>1080P 高清</button></a>#}
+{##}
+{#            {% elif dash['id']==116 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=116><button>1080P60 高帧率</button></a>#}
+{##}
+{#            {% elif dash['id']==120 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=120><button>4K 超清</button></a>#}
+{##}
+{#            {% elif dash['id']==125 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=125><button>HDR 真彩色</button></a>#}
+{##}
+{#            {% elif dash['id']==126 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=126><button>杜比视界</button></a>#}
+{##}
+{#            {% elif dash['id']==127 %}#}
+{#            <a href=/download?name={{ data['ep_name'] }}&num=127><button>8K 超高清</button></a>#}
+{##}
+{#        {% endif %}#}
+{##}
+{#    {% endfor %}#}
+{#{% endif %}#}
+{#    {% if data['type']=='list' %}#}
+{#        <h1>{{ data['Season_name'] }}</h1>#}
+{#        {% for dashe in data['Eps'] %}#}
+{#            <h2>{{ dashe['ep_name'] }}</h2>#}
+{#            <p>{% for dash in dashe['dash']['video'] %}#}
+{#            {% if dash['id']==112 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=112><button>1080P+ 高码率</button></a>#}
+{##}
+{#            {% elif dash['id']==64 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=64><button>720P 高清</button></a>#}
+{##}
+{#            {% elif dash['id']==74 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=74><button>720P60 高帧率</button></a>#}
+{##}
+{#            {% elif dash['id']==80 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=80><button>1080P 高清</button></a>#}
+{##}
+{#            {% elif dash['id']==116 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=116><button>1080P60 高帧率</button></a>#}
+{##}
+{#            {% elif dash['id']==120 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=120><button>4K 超清</button></a>#}
+{##}
+{#            {% elif dash['id']==125 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=125><button>HDR 真彩色</button></a>#}
+{##}
+{#            {% elif dash['id']==126 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=126><button>杜比视界</button></a>#}
+{##}
+{#            {% elif dash['id']==127 %}#}
+{#            <a href=/download?name={{ data['Season_name'] }}&num=127><button>8K 超高清</button></a>#}
+{#        {% endif %}#}
+{#        {% endfor %}#}
+{##}
+{##}
+{#        {% endfor %}#}
+{##}
+{##}
+{#    {% endif %}#}
+{#{% endif %}#}
+{##}
+{#    #}
+{#        #}
+{#    </p>#}
+{#</div>#}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>追剧下载</title>
+</head>
+<body>
+{% for season in data %}
+<a href=/v/drama?media_id={{ season['media_id'] }}><button>{{ season['block'] }} {{ season['Name'] }}</button></a>
+{% endfor %}
+{{ class_info }}
+</body>
+
+</html>
