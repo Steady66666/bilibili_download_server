@@ -29,7 +29,7 @@ app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
 app.config.update(DEBUG=True)
 print('启动完成')
-base_path = os.getcwd()
+base_path = os.getcwd().replace('\\', '/')
 
 
 def get_qr():
@@ -142,13 +142,15 @@ def auto(v_type):
                 titel = i['title']
                 print(f'自动化class任务:{titel} 完成')
         elif v_type == 'cartoon':
-            cartoon_list = json.loads(b_v_drama.series_list(1))
+            cartoon_list = json.loads(b_v_drama.series_list(1)
+)
             for i in cartoon_list:
                 b_v_drama.seasons_info(i)
                 titel = i['Name']
                 print(f'自动化class任务:{titel} 完成')
         elif v_type == 'drama':
-            drama_list = json.loads(b_v_drama.series_list(2))
+            drama_list = json.loads(b_v_drama.series_list(2)
+)
             for i in drama_list:
                 b_v_drama.seasons_info(i)
                 titel = i['Name']
