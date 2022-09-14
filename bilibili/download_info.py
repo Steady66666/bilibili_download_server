@@ -7,7 +7,7 @@ import bvideo_download
 import class_download
 import drama_download
 
-base_path = os.getcwd()  # 默认路径
+base_path = os.getcwd().replace('\\', '/')  # 默认路径
 
 
 def data_download(data, num=None):
